@@ -28,6 +28,6 @@ A ajouter dans le crontab
 # API Specs
 
 - Admin
-    - [Utilisateurs](/doc/admin/api/v1/users)
+    - [Utilisateurs](/doc/admin/api/v1/users.md)
 - Public
-    - [Utilisateurs](/doc/public/api/v1/users)
+    - [Utilisateurs](/doc/public/api/v1/users.md)
