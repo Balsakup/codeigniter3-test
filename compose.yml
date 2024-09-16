@@ -1,0 +1,41 @@
+services:
+    nginx:
+        image: bitnami/nginx:1.27
+        ports:
+            - '80:80'
+        volumes:
+            - '.:/app'
+            - './docker/conf/nginx/server_block.conf:/opt/bitnami/nginx/conf/server_blocks/server_block.conf:ro'
+        depends_on:
+            php:
+                condition: service_started
+    php:
+        image: docker.io/bitnami/php-fpm:8.3
+        volumes:
+            - .:/app
+            - ./docker/conf/php/common.conf:/opt/bitnami/php/etc/common.conf:ro
+        environment:
+            PHP_ENABLE_OPCACHE: false
+        depends_on:
+            db:
+                condition: service_healthy
+    db:
+        image: docker.io/bitnami/mariadb:11.4
+        ports:
+            - '3306:3306'
+        volumes:
+            - 'mariadb_data:/bitnami/mariadb'
+        environment:
+            MARIADB_ROOT_PASSWORD: "${DB_PASSWORD}"
+            MARIADB_USER: "${DB_USERNAME}"
+            MARIADB_PASSWORD: "${DB_PASSWORD}"
+            MARIADB_DATABASE: "${DB_DATABASE}"
+        healthcheck:
+            test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+            interval: 15s
+            timeout: 5s
+            retries: 6
+
+volumes:
+    mariadb_data:
+        driver: local
